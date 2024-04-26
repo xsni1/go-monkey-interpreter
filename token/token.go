@@ -18,8 +18,21 @@ const (
 	LBRACE     = "LBRACE"
 	RBRACE     = "RBRACE"
 	ASSIGN     = "ASSIGN"
-	INTEGER    = "INTEGER"
 	FUNCTION   = "FUNCTION"
 	SEMICOLON  = "SEMICOLON"
 	IDENTIFIER = "IDENTIFIER"
+	EOF        = "EOF"
+	ILLEGAL    = "ILLEGAL"
 )
+
+var keywords = map[string]TokenType{
+	"fn":  FUNCTION,
+	"let": LET,
+}
+
+func LookupIdent(ident string) TokenType {
+	if toktype, ok := keywords[ident]; ok {
+		return toktype
+	}
+	return IDENTIFIER
+}
