@@ -110,7 +110,7 @@ func (l *Lexer) NextToken() token.Token {
 			Type:    token.GT,
 			Literal: ">",
 		}
-	case 0:
+    case 0:
 		tok = token.Token{
 			Type:    token.EOF,
 			Literal: "",
@@ -144,7 +144,7 @@ func (l *Lexer) NextToken() token.Token {
 
 func (l *Lexer) readChar() {
 	if l.readPosition >= len(l.input) {
-		l.ch = '0'
+		l.ch = 0
 	} else {
 		l.ch = l.input[l.readPosition]
 	}
@@ -176,7 +176,7 @@ func (l *Lexer) skipWhitespaces() {
 
 func (l *Lexer) PeekChar() byte {
 	if l.readPosition >= len(l.input) {
-		return '0'
+		return 0
 	}
 	return l.input[l.readPosition]
 }
