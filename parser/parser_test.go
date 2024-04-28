@@ -1,6 +1,7 @@
 package parser
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/xsni1/go-monkey-interpreter/ast"
@@ -94,6 +95,34 @@ func TestReturnTest(t *testing.T) {
 				returnStmt.TokenLiteral())
 		}
 	}
+}
+
+// func traverse(exp *ast.ExpressionNode) {
+// 	if exp, ok := exp.Left.(*ast.ExpressionNode); ok && exp != nil {
+// 		traverse(exp)
+// 	}
+
+// 	if exp, ok := exp.Right.(*ast.ExpressionNode); ok && exp != nil {
+// 		traverse(exp)
+// 	}
+// }
+
+func TestParseExpression(t *testing.T) {
+	input := "1 * 2 * 3 + 4 * 5"
+	l := lexer.New(input)
+	p := New(l)
+
+	exp := p.ParseExpression()
+
+	m, ok := exp.(*ast.ExpressionNode)
+	if !ok {
+		t.Fatalf("err casting")
+	}
+
+
+    fmt.Println(m.String())
+
+	// traverse(m)
 }
 
 func checkParserErrors(t *testing.T, p *Parser) {

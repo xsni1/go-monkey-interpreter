@@ -2,6 +2,7 @@ package parser
 
 import (
 	"fmt"
+	"strconv"
 
 	"github.com/xsni1/go-monkey-interpreter/ast"
 	"github.com/xsni1/go-monkey-interpreter/lexer"
@@ -93,11 +94,70 @@ func (p *Parser) parseReturnStmt() *ast.ReturnStatement {
 		Token: p.curToken,
 	}
 
-    for p.curToken.Type != token.SEMICOLON {
-        p.nextToken()
-    }
+	for p.curToken.Type != token.SEMICOLON {
+		p.nextToken()
+	}
 
 	return stmt
+}
+
+func (p *Parser) ParseExpression() ast.Expression {
+	return p.parseExp()
+}
+
+func (p *Parser) parseExp() ast.Expression {
+	return p.parseTerm()
+}
+
+func (p *Parser) parseTerm() ast.Expression {
+	expr := p.parseFactor()
+
+	for p.curToken.Type == token.PLUS {
+		p.nextToken()
+		expr = &ast.ExpressionNode{
+			Left:  expr,
+            Operator: "+",
+			Right: p.parseFactor(),
+		}
+	}
+
+	return expr
+}
+
+func (p *Parser) parseFactor() ast.Expression {
+	expr := p.parseLiteral()
+
+	for p.curToken.Type == token.ASTERISK {
+		p.nextToken()
+		expr = &ast.ExpressionNode{
+			Left:  expr,
+            Operator: "*",
+			Right: p.parseLiteral(),
+		}
+	}
+
+	return expr
+}
+
+func (p *Parser) parseLiteral() ast.Expression {
+	if p.curToken.Type != token.INT {
+		p.errors = append(p.errors, "wrong int")
+		return nil
+	}
+
+	val, err := strconv.Atoi(p.curToken.Literal)
+	if err != nil {
+		p.errors = append(p.errors, "error converting int")
+		return nil
+	}
+	node := &ast.IntegerLiteral{
+		Token: p.curToken,
+		Value: int64(val),
+	}
+
+	p.nextToken()
+
+	return node
 }
 
 func (p *Parser) expectPeek(t token.TokenType) bool {
